@@ -24,7 +24,20 @@ def clean_output(path):
             os.remove(target)
 
 
+def validate(line):
+    """The sealed scorer only accepts 1-200 UTF-8 chars, one line,
+    not only whitespace. Fail loudly here rather than ship an
+    invalid entry the judge never sees."""
+    if not (1 <= len(line) <= 200):
+        raise SystemExit("entry must be 1-200 characters, got %d" % len(line))
+    if "\n" in line or "\r" in line:
+        raise SystemExit("entry must be a single line")
+    if not line.strip():
+        raise SystemExit("entry must not be only whitespace")
+
+
 def main():
+    validate(LINE)
     out_dir = "/output"
     clean_output(out_dir)
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as fh:
